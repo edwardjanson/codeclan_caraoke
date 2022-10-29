@@ -19,24 +19,22 @@ class KaraokeVenue:
     
     def increase_till(self, amount):
         self.till += amount
+
+    def check_in_guest(self, guest, room):
+        room.guests.append(guest)
     
+    def check_out_guest(self, guest, room):
+        if guest in room.tab:
+            guest.pay_with_wallet(room.tab[guest])
+            self.increase_till(room.tab[guest])
+            room.tab.pop(guest)
+        room.guests.remove(guest)
+
     def get_entry_fee(self, guest, room):
         if room.has_space() and guest.has_sufficient_money(self.entry_fee):
             guest.pay_with_wallet(self.entry_fee)
             self.increase_till(self.entry_fee)
-            room.check_in_guest(guest)
-
-    def check_in_guest(self, guest, room):
-        if room.has_space():
-            room.guests.append(guest)
-        else:
-            return "Sorry, this room is full."
-    
-    def check_out_guest(self, guest, room):
-        room.guests.remove(guest)
-        guest.pay_with_wallet(room.tab[guest.name])
-        self.increase_till(room.tab[guest.name])
-        room.tab[guest].clear()
+            self.check_in_guest(guest, room)
     
     def tab_value(self):
-        return sum([room.tab for room in self.rooms])
+        return sum([sum([value for value in room.tab.values()]) for room in self.rooms])

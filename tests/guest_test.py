@@ -23,7 +23,7 @@ class TestGuest(unittest.TestCase):
         self.guest_1.pay_with_wallet(10)
         self.assertEqual(40, self.guest_1.wallet)
     
-    def test_guest_cannot_afford(self):
+    def test_guest_does_not_have_sufficient_money(self):
         self.guest_1.pay_with_wallet(60)
         self.assertEqual("Not enough money.", self.guest_1.pay_with_wallet(60))
     

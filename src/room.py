@@ -14,4 +14,7 @@ class Room:
         return self.capacity > len(self.guests)
     
     def increase_tab(self, amount, guest):
-        self.tab[guest] += amount
+        if guest in self.tab:
+            self.tab[guest] += amount
+        else:
+            self.tab[guest] = amount

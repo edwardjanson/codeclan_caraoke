@@ -45,4 +45,4 @@ class TestRoom(unittest.TestCase):
 
     def test_increase_tab(self):
         self.room_1.increase_tab(10, self.guest_1)
-        self.assertEqual(10, self.room_1.tab)
+        self.assertEqual(10, self.room_1.tab[self.guest_1])

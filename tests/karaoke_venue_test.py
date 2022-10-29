@@ -3,6 +3,7 @@ from src.karaoke_venue import KaraokeVenue
 from src.room import Room
 from src.guest import Guest
 from src.bar import Bar
+from src.drink import Drink
 
 class TestKaraokeVenue(unittest.TestCase):
     
@@ -15,7 +16,11 @@ class TestKaraokeVenue(unittest.TestCase):
         self.karaoke_bar.add_room(self.room_2)
 
         self.guest_1 = Guest("Billy", 29, 50, "Oh Binary Day")
-        self.guest_2 = Guest("Eilidh", 29, 8, "Smells Like Binary")
+        self.karaoke_bar.check_in_guest(self.guest_1, self.room_1)
+        self.guest_2 = Guest("Eilidh", 27, 8, "Smells Like Binary")
+
+        self.bar = Bar()
+        self.drink_1 = Drink("Irn-Bru", 2, False)
     
     def test_karaoke_venue_has_name(self):
         self.assertEqual("Binary Tunes", self.karaoke_bar.name)
@@ -36,40 +41,41 @@ class TestKaraokeVenue(unittest.TestCase):
         self.assertEqual(3, len(self.karaoke_bar.rooms))
     
     def test_add_bar(self):
-        self.bar = Bar()
         self.karaoke_bar.add_bar(self.bar)
         self.assertNotEqual(None, self.bar)
-    
+
+    def test_check_in_guest(self):
+        self.karaoke_bar.check_in_guest(self.guest_2, self.room_1)
+        self.assertEqual(2, len(self.room_1.guests))
+
+    def test_check_out_guest_without_tab(self):
+        self.karaoke_bar.check_out_guest(self.guest_1, self.room_1)
+        self.assertEqual(0, len(self.room_1.guests))
+
+    def test_check_out_guest_with_tab(self):
+        self.drink_1 = Drink("Irn-Bru", 2, False)
+        self.bar.sell_drink(self.guest_1, self.room_1, self.drink_1)
+        self.karaoke_bar.check_out_guest(self.guest_1, self.room_1)
+        self.assertEqual(0, len(self.room_1.guests))
+
     def test_guest_can_pay_entry_fee_and_there_is_room(self):
         self.karaoke_bar.get_entry_fee(self.guest_1, self.room_1)
-        self.assertEqual(1, len(self.room_1.guests))
+        self.assertEqual(2, len(self.room_1.guests))
     
     def test_guest_cannot_pay_entry_fee_and_there_is_room(self):
         self.karaoke_bar.get_entry_fee(self.guest_2, self.room_1)
-        self.assertEqual(0, len(self.room_1.guests))
+        self.assertEqual(1, len(self.room_1.guests))
     
     def test_guest_can_pay_entry_fee_but_there_is_no_room(self):
-        self.karaoke_bar.check_in_guest(self.guest_1, self.room_1)
-        self.karaoke_bar.check_in_guest(self.guest_2, self.room_1)
-        self.karaoke_bar.get_entry_fee(self.guest_1, self.room_1)
-        self.assertEqual(2, len(self.room_1.guests))
-
-    def test_check_in_guest(self):
-        self.guest_2 = Guest("Eilidh", 27, 40, "Smells Like Binary")
-        self.karaoke_bar.check_in_guest(self.guest_2, self.room_1)
-        self.assertEqual(2, len(self.room_1.guests))
-
-    def test_check_out_guest(self):
-        self.karaoke_bar.check_out_guest(self.guest_1, self.room_1)
-        self.assertEqual(0, len(self.room_1.guests))
-    
-    def test_refuse_check_in_if_capacity_is_reached(self):
-        self.guest_2 = Guest("Eilidh", 27, 30, "Smells Like Binary")
         self.karaoke_bar.check_in_guest(self.guest_2, self.room_1)
         self.guest_3 = Guest("Henry", 20, 35, "Hey Dude")
-        self.assertEqual("Sorry, this room is full.", self.karaoke_bar.check_in_guest(self.guest_3, self.room_1))
+        self.karaoke_bar.get_entry_fee(self.guest_3, self.room_1)
+        self.assertEqual(2, len(self.room_1.guests))
 
     def test_get_tab_value(self):
+        self.guest_3 = Guest("Henry", 20, 35, "Hey Dude")
+        self.karaoke_bar.check_in_guest(self.guest_2, self.room_1)
         self.room_1.increase_tab(20, self.guest_1)
         self.room_2.increase_tab(50, self.guest_2)
-        self.assertEqual(70, self.karaoke_bar.tab_value())
+        self.room_2.increase_tab(15, self.guest_3)
+        self.assertEqual(85, self.karaoke_bar.tab_value())

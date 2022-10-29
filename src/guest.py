@@ -10,7 +10,10 @@ class Guest:
         return self.wallet >= amount
     
     def pay_with_wallet(self, amount):
-        self.wallet -= amount
+        if self.has_sufficient_money(amount):
+            self.wallet -= amount
+        else:
+            return "Not enough money."
     
     def cheer(self, song):
         if song == self.favourite_song:

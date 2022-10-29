@@ -8,8 +8,6 @@ from src.room import Room
 class TestBar(unittest.TestCase):
     
     def setUp(self):
-        # self.karaoke_bar = KaraokeVenue("Binary Tunes", 2000)
-
         self.bar = Bar()
         self.drink_1 = Drink("Irn-Bru", 2, False)
         self.drink_2 = Drink("Schiehallion", 6, True)
@@ -19,8 +17,6 @@ class TestBar(unittest.TestCase):
         self.room_1 = Room("Frontstreet Room", 2)
         self.guest_1 = Guest("Billy", 29, 3, "Oh Binary Day")
         self.guest_2 = Guest("Beth", 16, 20, "Smells Like Binary")
-        # self.karaoke_bar.check_in_guest(self.guest_1, self.room_1)
-        # self.karaoke_bar.check_in_guest(self.guest_2, self.room_1)
     
     def test_bar_has_drinks_list(self):
         self.assertEqual([self.drink_1, self.drink_2], self.bar.drinks_list)
